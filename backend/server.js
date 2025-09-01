@@ -13,6 +13,7 @@ require('dotenv').config();
 const { validateEnvironment, logger } = require('./config/environment');
 const HealthCheckService = require('./services/HealthCheckService');
 const NotificationTriggerService = require('./services/NotificationTriggerService');
+const GoogleMapsService = require('./services/GoogleMapsService');
 
 // Validate environment before starting
 validateEnvironment();
@@ -21,6 +22,8 @@ validateEnvironment();
 const authRoutes = require('./routes/auth');
 const busRoutes = require('./routes/buses');
 const trackingRoutes = require('./routes/tracking');
+const notificationRoutes = require('./routes/notifications');
+const advancedMappingRoutes = require('./routes/mapping/advancedMapping');
 
 // Import socket configuration
 const configureSocket = require('./config/socket');
@@ -171,6 +174,8 @@ app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
 app.use('/api/auth', authRoutes);
 app.use('/api/buses', busRoutes);
 app.use('/api/tracking', trackingRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/mapping', advancedMappingRoutes);
 
 // Enhanced health check endpoints
 app.get('/api/health', async (req, res) => {
@@ -217,7 +222,9 @@ app.get('/api', (req, res) => {
     endpoints: {
       auth: '/api/auth',
       buses: '/api/buses', 
-      tracking: '/api/tracking'
+      tracking: '/api/tracking',
+      notifications: '/api/notifications',
+      mapping: '/api/mapping'
     },
     timestamp: new Date().toISOString()
   });
@@ -229,7 +236,7 @@ app.use('/api/*', (req, res) => {
   res.status(404).json({
     success: false,
     error: 'API endpoint not found',
-    availableEndpoints: ['/api/auth', '/api/buses', '/api/tracking', '/api/health', '/api/docs']
+    availableEndpoints: ['/api/auth', '/api/buses', '/api/tracking', '/api/notifications', '/api/mapping', '/api/health', '/api/docs']
   });
 });
 
@@ -342,6 +349,14 @@ server.listen(PORT, () => {
   // Initialize enhanced notification system
   NotificationTriggerService.initialize();
   logger.info('🔔 Proximity-based notification system started');
+  
+  // Initialize Google Maps Service
+  const mapsInitialized = GoogleMapsService.initialize();
+  if (mapsInitialized) {
+    logger.info('🗺️ Google Maps Service initialized - Traffic features enabled');
+  } else {
+    logger.warn('⚠️ Google Maps Service not configured - Using fallback calculations');
+  }
 });
 
 module.exports = app;

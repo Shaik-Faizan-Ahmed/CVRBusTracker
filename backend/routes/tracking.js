@@ -5,6 +5,7 @@ const User = require('../models/User');
 const { auth, trackerAuth, adminAuth } = require('../middleware/auth');
 const { trackingValidation } = require('../validation/schemas');
 const LocationCalculator = require('../services/LocationCalculator');
+const GoogleMapsService = require('../services/GoogleMapsService');
 const NotificationTriggerService = require('../services/NotificationTriggerService');
 const { logger } = require('../config/environment');
 
@@ -422,8 +423,20 @@ router.get('/eta/:routeId/:stopId', auth, async (req, res) => {
       });
     }
 
-    // Calculate ETA with different methods
+    // Calculate ETA with different methods including traffic-aware
     const currentETA = route.calculateETAToStop(stopIndex, route.currentLocation);
+    
+    // Get traffic-aware ETA if Google Maps is available
+    let trafficAwareETA = null;
+    try {
+      trafficAwareETA = await GoogleMapsService.calculateTrafficAwareETA(
+        { lat: route.currentLocation.latitude, lng: route.currentLocation.longitude },
+        { lat: stop.latitude, lng: stop.longitude },
+        'DRIVING'
+      );
+    } catch (error) {
+      logger.warn('Traffic-aware ETA calculation failed, using fallback:', error.message);
+    }
     const distance = LocationCalculator.calculateDistance(
       route.currentLocation.latitude,
       route.currentLocation.longitude,
@@ -453,7 +466,16 @@ router.get('/eta/:routeId/:stopId', auth, async (req, res) => {
         latitude: route.currentLocation.latitude,
         longitude: route.currentLocation.longitude,
         accuracy: route.currentLocation.accuracy
-      }
+      },
+      // Enhanced with traffic data
+      trafficAware: trafficAwareETA ? {
+        estimatedMinutes: trafficAwareETA.estimatedMinutes,
+        estimatedMinutesWithTraffic: trafficAwareETA.estimatedMinutesWithTraffic,
+        trafficDelayMinutes: trafficAwareETA.trafficDelayMinutes,
+        trafficCondition: trafficAwareETA.trafficCondition,
+        confidence: trafficAwareETA.confidence,
+        googleMapsData: true
+      } : null
     };
 
     // Add historical performance data

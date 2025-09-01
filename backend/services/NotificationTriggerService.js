@@ -114,7 +114,7 @@ class NotificationTriggerService {
       }
     };
 
-    await NotificationService.sendToUser(student.fcmToken, notification);
+    await NotificationService.sendToDevice(student.fcmToken, notification);
     this.setCooldown(cooldownKey);
 
     logger.info(`Arrival notification sent to ${student.rollNumber} for ${route.name} at ${stop.name}`);
@@ -148,7 +148,7 @@ class NotificationTriggerService {
       }
     };
 
-    await NotificationService.sendToUser(student.fcmToken, notification);
+    await NotificationService.sendToDevice(student.fcmToken, notification);
     this.setCooldown(cooldownKey);
 
     logger.info(`Approaching notification sent to ${student.rollNumber} for ${route.name} at ${stop.name}`);
@@ -183,7 +183,7 @@ class NotificationTriggerService {
         }
       };
 
-      await NotificationService.sendToUser(student.fcmToken, notification);
+      await NotificationService.sendToDevice(student.fcmToken, notification);
       this.setCooldown(cooldownKey);
 
       logger.info(`ETA notification sent to ${student.rollNumber} for ${route.name} at ${stop.name}: ${eta}min`);
@@ -218,7 +218,7 @@ class NotificationTriggerService {
 
       // Send to all students on route
       const tokens = studentsOnRoute.map(student => student.fcmToken);
-      await NotificationService.sendToMultipleUsers(tokens, notification);
+      await NotificationService.sendToMultipleDevices(tokens, notification);
 
       logger.info(`Delay notification sent to ${tokens.length} students for ${route.name}: ${delayInfo.delayMinutes}min delay`);
 
@@ -252,7 +252,7 @@ class NotificationTriggerService {
       };
 
       const tokens = studentsOnRoute.map(student => student.fcmToken);
-      await NotificationService.sendToMultipleUsers(tokens, notification);
+      await NotificationService.sendToMultipleDevices(tokens, notification);
 
       logger.info(`Trip start notification sent to ${tokens.length} students for ${route.name}`);
 
@@ -289,7 +289,7 @@ class NotificationTriggerService {
       };
 
       const tokens = users.map(user => user.fcmToken);
-      await NotificationService.sendToMultipleUsers(tokens, notification);
+      await NotificationService.sendToMultipleDevices(tokens, notification);
 
       logger.warn(`Emergency notification sent to ${tokens.length} users for ${route.name}: ${emergencyInfo.message}`);
 
@@ -326,7 +326,7 @@ class NotificationTriggerService {
         };
 
         const tokens = studentsWaiting.map(student => student.fcmToken);
-        await NotificationService.sendToMultipleUsers(tokens, notification);
+        await NotificationService.sendToMultipleDevices(tokens, notification);
 
         logger.info(`Capacity warning sent to ${tokens.length} students for ${route.name}: ${occupancyPercentage}% full`);
       }
@@ -444,7 +444,7 @@ class NotificationTriggerService {
       };
 
       const tokens = studentsOnRoute.map(student => student.fcmToken);
-      await NotificationService.sendToMultipleUsers(tokens, notification);
+      await NotificationService.sendToMultipleDevices(tokens, notification);
 
       logger.info(`Schedule change notification sent to ${tokens.length} students for ${route.name}`);
 
@@ -480,7 +480,7 @@ class NotificationTriggerService {
       };
 
       const tokens = studentsOnRoute.map(student => student.fcmToken);
-      await NotificationService.sendToMultipleUsers(tokens, notification);
+      await NotificationService.sendToMultipleDevices(tokens, notification);
 
       logger.info(`Weather alert sent to ${tokens.length} students for ${route.name}: ${weatherInfo.condition}`);
 
