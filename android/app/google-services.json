@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "757907997137",
+    "project_id": "cvr-bus-tracker-d86cf",
+    "storage_bucket": "cvr-bus-tracker-d86cf.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:757907997137:android:a4af3fe83b2562aec7a0f0",
+        "android_client_info": {
+          "package_name": "com.cvrbustracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAclQ5PSL0O0bbvM0U3z8TdUmLtKom06A8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
